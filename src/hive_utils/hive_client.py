@@ -1,11 +1,7 @@
 import contextlib
-import sys
 
 from hive_service import ThriftHive
 from hive_service.ttypes import HiveServerException
-from hive_metastore.ttypes import FieldSchema
-from hive_metastore.ttypes import Table
-from thrift import Thrift
 from thrift.transport import TSocket
 from thrift.transport import TTransport
 from thrift.protocol import TBinaryProtocol
@@ -25,7 +21,7 @@ def openclose(transport):
 
 
 class HiveClient(object):
-    """A wrapper around the crappy thrift API."""
+    """A wrapper around the thrift API."""
 
     def __init__(self, server='localhost', port=10001, db='default'):
         """Initialize the Hive Client.
@@ -35,6 +31,7 @@ class HiveClient(object):
         :parameter db(string): databased name. Default- default
 
         :return: None
+
         """
 
         transport = TSocket.TSocket(server, port)
@@ -54,6 +51,7 @@ class HiveClient(object):
 
 
         Returns results directly from the Hive client.
+
         """
         with openclose(self.__transport):
             self.__client.execute(*args, **kwargs)
@@ -64,6 +62,7 @@ class HiveClient(object):
         """Creates a session during which the connection remains open.
 
         Use this for a contiguous block of Hive commands.
+
         """
         self.__transport.open()
         self.__transport.keep_open = True
@@ -78,7 +77,7 @@ class HiveClient(object):
             try:
                 table = self.__client.get_table(self.__db, table_name)
                 return table
-            except: 
+            except:
                 raise HiveClientException('Table %s does not exist' %
                                         (table_name))
 
@@ -88,6 +87,7 @@ class HiveClient(object):
         :parameter table_name(string): name of the table.
 
         :return: list of tuples (name, data_type)
+
         """
 
         with openclose(self.__transport):
@@ -109,6 +109,7 @@ class HiveClient(object):
         :return: None
 
         :raises HiveClientException: if the column already exists.
+
         """
 
         with openclose(self.__transport):
@@ -134,6 +135,7 @@ class HiveClient(object):
         :return: None
 
         :raises HiveClientException: if the column doesn't exist in the table.
+
         """
         with openclose(self.__transport):
             table = self.__client.get_table(self.__db, table_name)
@@ -158,8 +160,9 @@ class HiveClient(object):
                 etc.)
 
         :return: None
-        
+
         :raises HiveClientException: if the column doesn't exist in the table.
+
         """
         with openclose(self.__transport):
             table = self.__client.get_table(self.__db, table_name)
