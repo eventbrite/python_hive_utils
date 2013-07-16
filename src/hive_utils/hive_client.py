@@ -53,6 +53,7 @@ class HiveClient(object):
         Returns results directly from the Hive client.
 
         """
+
         with openclose(self.__transport):
             self.__client.execute(*args, **kwargs)
             return self.__client.fetchAll()
@@ -64,6 +65,7 @@ class HiveClient(object):
         Use this for a contiguous block of Hive commands.
 
         """
+
         self.__transport.open()
         self.__transport.keep_open = True
         yield
@@ -78,8 +80,9 @@ class HiveClient(object):
                 table = self.__client.get_table(self.__db, table_name)
                 return table
             except:
-                raise HiveClientException('Table %s does not exist' %
-                                        (table_name))
+                raise HiveClientException(
+                    'Table %s does not exist' % (table_name,)
+                )
 
     def get_columns(self, table_name):
         """Get ordered columns list for a table.
@@ -117,8 +120,12 @@ class HiveClient(object):
             col_names = [getattr(col, 'name')
                          for col in table.sd.cols]
             if column_name in col_names:
-                raise HiveClientException('Table %s already has column %s',
-                        table_name, column_name)
+                raise HiveClientException(
+                    'Table %s already has column %s' % (
+                        table_name,
+                        column_name,
+                    )
+                )
             new_column = FieldSchema(name=column_name, type=data_type,
                                      comment=comment)
             table.sd.cols.append(new_column)
@@ -137,6 +144,7 @@ class HiveClient(object):
         :raises HiveClientException: if the column doesn't exist in the table.
 
         """
+
         with openclose(self.__transport):
             table = self.__client.get_table(self.__db, table_name)
             num_cols = len(table.sd.cols)
@@ -146,8 +154,12 @@ class HiveClient(object):
             if (len(table.sd.cols) - 1) == num_cols:
                 self.__client.alter_table(self.__db, table_name, table)
             else:
-                raise HiveClientException('Table %s does not have column %s' %
-                        (table_name, column_name))
+                raise HiveClientException(
+                    'Table %s does not have column %s' % (
+                        table_name,
+                        column_name,
+                    )
+                )
 
     def alter_column_type(self, table_name, column_name, data_type, comment=''):
         """Alter the column type of a table.
@@ -164,15 +176,20 @@ class HiveClient(object):
         :raises HiveClientException: if the column doesn't exist in the table.
 
         """
+
         with openclose(self.__transport):
             table = self.__client.get_table(self.__db, table_name)
             col_names = [getattr(col, 'name')
                          for col in table.sd.cols]
             if column_name not in col_names:
-                raise HiveClientException('Table %s does not have column %s',
-                        table_name, column_name)
+                raise HiveClientException(
+                    'Table %s does not have column %s' % (
+                        table_name,
+                        column_name,
+                    )
+                )
             columns_to_alter = [col for col in table.sd.cols
-                                if col.name == column_name and 
+                                if col.name == column_name and
                                 col.type != data_type]
             for column_to_alter in columns_to_alter:
                 column_to_alter.type = data_type
