@@ -22,4 +22,7 @@ setup(
     include_package_data=True,
     zip_safe=True,
     entry_points={},
+    extras_require = {
+        'hive-thrift-py':  ['hive-thrift-py==0.0.1'],
+    },
 )
