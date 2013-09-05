@@ -4,4 +4,6 @@ News
 0.0.1
 -----
 
+*Relase date: September 5th, 2013*
+
 Creation.
